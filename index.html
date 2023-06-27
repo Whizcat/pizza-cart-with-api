@@ -1,108 +1,99 @@
+
 <!DOCTYPE html>
-<html lang="en">
+    <html>
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thabo Martins Delicious Pizza </title>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="pizza-cart-api.js"></script>
-    <script src="//unpkg.com/alpinejs" defer></script>
+            <head>
+                <meta charset="utf-8">
+                <meta name="viewport" content="width=device-width">
+                <link rel="stylesheet" href="style.css">
+                
+                <title>Pizza Pamphlet</title>
+                </head>
 
-    <style>
-        body {
-            background-color: fuchsia;
-            font-family: Verdana, Geneva, Tahoma, sans-serif;
-        }
+                
 
-        .cart {
-            border: 1px solid;
-            border: 0;
-            background-color: aquamarine;
-            padding: 7em;
-            margin: 1em;
-            width: 30em;
-            border-radius: 1em;
-            
-        }
+<div x-data="{ cartItems: [], toppings: [] }">
+  <h1>Pizza Order</h1>
 
-        table,
-        th,
-        td {
-            border: 2px solid black;
-            text-align: left;
-            padding: 15px;
-            /*padding-right: 100px;*/
-            border-collapse: collapse;
-            margin: 2px;
+  <h2>Build Your Pizza</h2>
+  <form @submit.prevent="addToCart">
+    <label for="size">Size:</label>
 
+    <select id="size" x-model="selectedSize">
+      <option value="small">Small</option>
+      <option value="medium">Medium</option>
+      <option value="large">Large</option>
+    </select>
 
-        }
-    </style>
-
-</head>
-
-<body>
-    <div x-data="pizzaCartWithAPIWidget">
-        <h1>Our Delicious Pizza</h1>
-
-        <div x-text="message"></div>
-        <div x-text="cartId"></div>
-
-        <h2>Pizzas you can order</h2>
-        <div>
-            Who is buying pizza: <input type="text" x-model="username">
-        </div>
-        <strong>
-            <label for="PizzaTotal">Total number of pizza:</label>
-            <span x-text="pizzas.length"></span>
-        </strong>
-
-        <div>
-
-            <div>
-                Cart total: <strong x-text="cart.total"></strong>
-            </div>
-
-            <div class="cart">
-                <table>
-                    <tr>
-                        <th>Flavour</th>
-                        <th>Qty</th>
-                        <th>Total</th>
-                    </tr>
-                    <template x-for="pizza in cart.pizzas">
-                        <tr>
-                            <td x-text="pizza.flavour"></td>
-                            <td x-text="pizza.qty"></td>
-                            <td x-text="pizza.total"></td>
-                        </tr>
-                    </template>
-                </table>
-            </div>
-        </div>
-
-        <table class="pizza_API">
-            <template x-for="pizza in pizzas">
-                <tr>
-                    <td>
-                        <img x-bind:src="pizzaImage(pizza)" height="30" alt="">
-                    </td>
-                    <td x-text="pizza.flavour"></td>
-                    <td x-text="pizza.size"></td>
-                    <td x-text="pizza.price"></td>
-                    <td>
-                        <button x-on:click="add(pizza)">Buy</button>
-                    </td>
-                </tr>
-            </template>
-        </table>
-
-
-
+    <h3>Toppings:</h3>
+    <div x-for="topping in toppings" :key="topping.id">
+      <input type="checkbox" :value="topping.name" x-model="selectedToppings">
+      <span x-text="topping.name"></span>
     </div>
 
-</body>
+    <button type="submit">Add to Cart</button>
+  </form>
 
-</html>
+  <h2>Cart:</h2>
+  <ul>
+    <template x-for="item in cartItems" :key="item.id">
+      <li x-text="item.name"></li>
+    </template>
+  </ul>
+</div>
+
+<body>
+<div x-data="{ pizza: '', toppings: [], delivery: false, totalPrice: 0 }">
+    <h2>Thabo= Yamampela Pizza</h2>
+    <form>
+      <h3>Pizza</h3>
+      <label>
+        <input type="radio" name="pizza" value="cheese" x-model="pizza">
+        Cheese
+      </label>
+      <label>
+        <input type="radio" name="pizza" value="pepperoni" x-model="pizza">
+        Pepperoni
+      </label>
+      <label>
+        <input type="radio" name="pizza" value="veggie" x-model="pizza">
+        Veggie
+      </label>
+      
+      <h3>Toppings</h3>
+      <label>
+        <input type="checkbox" name="toppings" value="mushrooms" x-model="toppings">
+        Mushrooms
+      </label>
+      <label>
+        <input type="checkbox" name="toppings" value="olives" x-model="toppings">
+        Olives
+      </label>
+      <label>
+        <input type="checkbox" name="toppings" value="bell peppers" x-model="toppings">
+        Bell Peppers
+      </label>
+      
+      <h3>Delivery?</h3>
+      <label>
+        <input type="checkbox" name="delivery" x-model="delivery">
+        Yes, I'd like delivery!
+      </label>
+      
+      <h3>Total Price: R350.00<span x-text="totalPrice.toFixed(2)"></span></h3>
+      
+      <button type="submit" x-bind:disabled="!pizza" @click.prevent="orderPizza()">Order Now</button>
+    </form>
+  </div>
+
+  <section class="row">
+
+    <div class="col-md-6">
+      <div class="background-color"></div> 
+     <p><b>Contact us at: (012)-821-2019</b></p>
+        <p>twitter: @Thabo-yamampela</p>
+        <p>Instagam: @Thabo-yamampela</p>
+        <p>facebook: Thabo Martins</p>
+   
+
+  <script src="index.js" defer></script>
