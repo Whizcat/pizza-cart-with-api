@@ -1,99 +1,167 @@
-
 <!DOCTYPE html>
-    <html>
+<html lang="en">
 
-            <head>
-                <meta charset="utf-8">
-                <meta name="viewport" content="width=device-width">
-                <link rel="stylesheet" href="style.css">
-                
-                <title>Pizza Pamphlet</title>
-                </head>
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pizza Perfect</title>
+  <script src="//unpkg.com/alpinejs" defer></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+  <link rel="stylesheet" href="style.css" />
+</head>
 
-                
+<body x-data="pizzaCartWithAPIWidget">
+  <main class="container text-center">
 
-<div x-data="{ cartItems: [], toppings: [] }">
-  <h1>Pizza Order</h1>
+    <h1>Pizza Perfect</h1>
 
-  <h2>Build Your Pizza</h2>
-  <form @submit.prevent="addToCart">
-    <label for="size">Size:</label>
+    <button class="btn btn-primary" x-on:click="hideCart=!hideCart" x-show="open && cart.total.toFixed(2)>0 && username && cartId">display
+      cart</button>
 
-    <select id="size" x-model="selectedSize">
-      <option value="small">Small</option>
-      <option value="medium">Medium</option>
-      <option value="large">Large</option>
-    </select>
+    <label x-show="!username">Username: </label>
+    <input x-model="name" placeholder="Enter username" class="form-control-sm" x-show="!username" />
+    <button @click="(username=name), (login())" x-show="!username" class="btn btn-primary">Login</button>
 
-    <h3>Toppings:</h3>
-    <div x-for="topping in toppings" :key="topping.id">
-      <input type="checkbox" :value="topping.name" x-model="selectedToppings">
-      <span x-text="topping.name"></span>
+    <a class="btn btn-dark" href="history.html" x-show="username && cartId">View history</a>
+    <button class="btn btn-warning" @click="logout()" x-show="username && cartId">Logout</button>
+
+    <br><br>
+
+    <div x-show="username && cartId">
+      <span>Active Cart: </span><span x-text="cartId"></span><br>
+
+
+      User: <span x-text="username"></span>
     </div>
 
-    <button type="submit">Add to Cart</button>
-  </form>
+    <div class="cart" x-show="hideCart && username && cartId">
 
-  <h2>Cart:</h2>
-  <ul>
-    <template x-for="item in cartItems" :key="item.id">
-      <li x-text="item.name"></li>
-    </template>
-  </ul>
-</div>
+      <h3><b>Shopping Cart</b> </h3>
 
-<body>
-<div x-data="{ pizza: '', toppings: [], delivery: false, totalPrice: 0 }">
-    <h2>Thabo= Yamampela Pizza</h2>
-    <form>
-      <h3>Pizza</h3>
-      <label>
-        <input type="radio" name="pizza" value="cheese" x-model="pizza">
-        Cheese
-      </label>
-      <label>
-        <input type="radio" name="pizza" value="pepperoni" x-model="pizza">
-        Pepperoni
-      </label>
-      <label>
-        <input type="radio" name="pizza" value="veggie" x-model="pizza">
-        Veggie
-      </label>
-      
-      <h3>Toppings</h3>
-      <label>
-        <input type="checkbox" name="toppings" value="mushrooms" x-model="toppings">
-        Mushrooms
-      </label>
-      <label>
-        <input type="checkbox" name="toppings" value="olives" x-model="toppings">
-        Olives
-      </label>
-      <label>
-        <input type="checkbox" name="toppings" value="bell peppers" x-model="toppings">
-        Bell Peppers
-      </label>
-      
-      <h3>Delivery?</h3>
-      <label>
-        <input type="checkbox" name="delivery" x-model="delivery">
-        Yes, I'd like delivery!
-      </label>
-      
-      <h3>Total Price: R350.00<span x-text="totalPrice.toFixed(2)"></span></h3>
-      
-      <button type="submit" x-bind:disabled="!pizza" @click.prevent="orderPizza()">Order Now</button>
-    </form>
-  </div>
+      <div>
+        <table class="table table-secondary">
+          <thead>
+            <tr>
+              <th scope="col">Flavour</th>
+              <th scope="col">Type</th>
+              <th scope="col">Size</th>
+              <th scope="col">Price</th>
+              <th scope="col">Add item to cart</th>
+              <th scope="col">QTY</th>
 
-  <section class="row">
+            </tr>
+          </thead>
+          <tbody>
 
-    <div class="col-md-6">
-      <div class="background-color"></div> 
-     <p><b>Contact us at: (012)-821-2019</b></p>
-        <p>twitter: @Thabo-yamampela</p>
-        <p>Instagam: @Thabo-yamampela</p>
-        <p>facebook: Thabo Martins</p>
-   
+            <template x-for="pizza in cart.pizzas">
+              <tr>
+                <td x-text="pizza.flavour"></td>
+                <td x-text="pizza.type"></td>
+                <td x-text="pizza.size"></td>
+                <td x-text="pizza.price"></td>
+                <td><button class="btn btn-primary" x-on:click="buyPizza(pizza)">+</button>
+                  <button class="btn btn-primary" x-on:click="removePizza(pizza)">-</button>
+                </td>
+                <td x-text="pizza.qty"></td>
+              </tr>
+            </template>
 
-  <script src="index.js" defer></script>
+            <tr>
+              <td></td>
+              <td></td>
+              <td>Total</td>
+              <td><span x-text="cart.total.toFixed(2)"></span></td>
+              <td>
+                <button class="btn btn-info" x-show="!makePayment" x-on:click="makePayment=true">Checkout</button>
+              </td>
+              <td></td>
+            </tr>
+
+            <tr x-show="makePayment">
+              <td colspan="6">
+                <div>
+                  <template x-if="message=='Enjoy your pizza'">
+                    <div class="alert alert-success">
+                      <p x-text="message"></p>
+                      <span>Change is: R</span><span x-text="change.toFixed(2)"></span>
+                    </div>
+
+                  </template>
+
+                  <template x-if="message== 'Sorry, That is not enough money!'">
+                    <p class="alert alert-danger" x-text="message"></p>
+                  </template>
+                  <div>
+                    <label>Enter Amount: </label>
+                    <input class="form-control-sm" type="number" placeholder="Enter Amount" x-model="Amount" />
+                    <button x-on:click="payment" class="btn btn-success">Make payment</button>
+                  </div>
+                </div>
+
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+    <div x-show="username" class="pizza row text-center">
+      <template x-for="pizza in featuredpizzasList.pizzas">
+        <div class="small-pizza col-md-3">
+
+          <img src="images/pizza-icon-15.jpg" alt="" width="300" /><br>
+          <h2 x-text="pizza.flavour"></h2>
+          <span><b>R</b><b x-text="pizza.price"></b></span>
+          <span x-text="pizza.size"></span><br>
+          <p x-text="pizza.type"></p>
+          <button type="button" class="btn btn-primary" @click="buyPizza(pizza)">Buy</button>
+        </div>
+      </template>
+
+    </div>
+
+    <br>
+    <div class="container" x-show="username">
+      <h3>Available pizzas</h3>
+
+      <div class="pizza row text-center">
+
+        <template x-for="pizza in listOfPizzas">
+
+          <div class="medium-pizza col-md-4">
+            <br>
+            <h4 x-text="pizza.flavour"></h4>
+            <span x-text="pizza.size"></span>
+            <span x-text="pizza.price"></span> <br>
+            <h6 x-text="pizza.type"></h6>
+            <button x-on:click="buyPizza(pizza)" class="btn btn-primary">Buy</button>
+            <button @click="postfeaturedPizzas(pizza.id)" class="btn btn-info">feature</button>
+            <br>
+          </div>
+        </template>
+      </div>
+    </div>
+
+
+    <div class="contact">
+      <h2>Contact details</h2>
+      <hr>
+
+      <p><b>Contact us at: (012)-821-2019</b></p>
+
+      <p>twitter: @Thabo-yamampela</p>
+      <p>Instagam: @Thabo-yamampela</p>
+      <p>facebook: Thabo Martins</p>
+
+    </div>
+  </main>
+
+  <script src="index.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+</body>
+
+</html>

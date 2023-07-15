@@ -1,18 +1,60 @@
-
-
 body{
-  background-image: url("https://th.bing.com/th/id/R.216fe99f0f1697aefef6fd036b2269f4?rik=GCqMSJABQ%2flIPg&pid=ImgRaw&r=0");
-  background-size: contain;
-  opacity: 1;
-  background-color: floralwhite;
-  margin: 5;
-  font-family: 'Times New Roman', Times, serif;
-  color: darkolivegreen;
-  font-size: x-large;
-  text-align: end;
-  
-}
-
-
-
+    
+    text-align: center;
+    }
+    
+    .small-pizza{
+        background-color:#ebcaca;
+        margin: 5px;
+        padding: 0.5em;
+        border-radius: 0.5em;
+        flex: 1;
+    }
+    
+    .medium-pizza{
+        background-color: #e2e2da;
+        /* margin: 5px; */
+        margin: auto;
+        padding: 5px;
+        border-radius: 0.5em;
+        border: black solid;
+        /* width: 500px; */
+        /* flex: 1; */
+    }
+    
+    
+    
+    .contact{
+        background-color: hsla(187, 93%, 49%, 0.953);
+        margin: 1em;
+        padding: 1em;
+    }
+    
+    
+    @media (min-width:960px){
+        .pizza{
+            border-radius: 0.5em;
+            display: flex;
+            border: bold solid;
+        }
+           
+    }
+    
+    h1{
+        text-align: center;
+    }
+    
+    .contact{
+        text-align: center;
+    }
+    
+    body{
+        background-color: #320a4ba3;
+        text-align: center;
+    }
+    .cart{
+        background-color: hsla(184, 93%, 49%, 0.953);
+        margin: 1em;
+        padding: 1em;
+    }
 
